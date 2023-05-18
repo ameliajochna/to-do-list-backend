@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "to-do-list-backend"
+version = "1.0.0"
+description = "To do list backend"
+authors = ["Amelia Jochna"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.2"
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"
