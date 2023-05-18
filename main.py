@@ -1,10 +1,9 @@
-from typing import List
 import fastapi as _fastapi
 import fastapi.security as _security
-
 import sqlalchemy.orm as _orm
 
-import services as _services, schemas as _schemas
+import schemas as _schemas
+import services as _services
 
 app = _fastapi.FastAPI()
 

@@ -1,10 +1,12 @@
 import fastapi as _fastapi
 import fastapi.security as _security
 import jwt as _jwt
-import sqlalchemy.orm as _orm
 import passlib.hash as _hash
+import sqlalchemy.orm as _orm
 
-import database as _database, models as _models, schemas as _schemas
+import database as _database
+import models as _models
+import schemas as _schemas
 
 oauth2schema = _security.OAuth2PasswordBearer(tokenUrl='/api/token')
 
