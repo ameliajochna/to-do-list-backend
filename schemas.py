@@ -1,7 +1,7 @@
-import pydantic as _pydantic
+import pydantic
 
 
-class _UserBase(_pydantic.BaseModel):
+class _UserBase(pydantic.BaseModel):
     email: str
 
 
@@ -19,7 +19,7 @@ class User(_UserBase):
         orm_mode = True
 
 
-class _TaskBase(_pydantic.BaseModel):
+class _TaskBase(pydantic.BaseModel):
     state: str
     title: str
     description: str

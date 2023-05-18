@@ -1,88 +1,88 @@
-import fastapi as _fastapi
+import fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
 
-import schemas as _schemas
-import services as _services
+import schemas
+import services
 
-app = _fastapi.FastAPI()
+app = fastapi.FastAPI()
 
 app.route('/')
 
 
 @app.post('/api/users')
-async def create_user(user: _schemas.UserCreate, db: _orm.Session = _fastapi.Depends(_services.get_db)):
-    db_user = await _services.get_user_by_email(user.email, db)
+async def create_user(user: schemas.UserCreate, db: _orm.Session = fastapi.Depends(services.get_db)):
+    db_user = await services.get_user_by_email(user.email, db)
     if db_user:
-        raise _fastapi.HTTPException(status_code=400, detail='Email already in use')
+        raise fastapi.HTTPException(status_code=400, detail='Email already in use')
 
-    user = await _services.create_user(user, db)
+    user = await services.create_user(user, db)
 
-    return await _services.create_token(user)
+    return await services.create_token(user)
 
 
 @app.post('/api/token')
 async def generate_token(
-    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    form_data: _security.OAuth2PasswordRequestForm = fastapi.Depends(),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    user = await _services.authenticate_user(form_data.username, form_data.password, db)
+    user = await services.authenticate_user(form_data.username, form_data.password, db)
 
     if not user:
-        raise _fastapi.HTTPException(status_code=401, detail='Invalid credentials')
+        raise fastapi.HTTPException(status_code=401, detail='Invalid credentials')
 
-    return await _services.create_token(user)
+    return await services.create_token(user)
 
 
-@app.get('/api/users/me', response_model=_schemas.User)
-async def get_user(user: _schemas.User = _fastapi.Depends(_services.get_current_user)):
+@app.get('/api/users/me', response_model=schemas.User)
+async def get_user(user: schemas.User = fastapi.Depends(services.get_current_user)):
     return user
 
 
-@app.post('/api/tasks', response_model=_schemas.Task)
+@app.post('/api/tasks', response_model=schemas.Task)
 async def create_task(
-    task: _schemas.TaskCreate,
-    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    task: schemas.TaskCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    return await _services.create_task(user=user, db=db, task=task)
+    return await services.create_task(user=user, db=db, task=task)
 
 
-@app.get('/api/tasks', response_model=list[_schemas.Task])
+@app.get('/api/tasks', response_model=list[schemas.Task])
 async def get_tasks(
-    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    return await _services.get_tasks(user=user, db=db)
+    return await services.get_tasks(user=user, db=db)
 
 
 @app.get('/api/tasks/{task_id}', status_code=200)
 async def get_task(
     task_id: int,
-    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    return await _services.get_task(task_id, user, db)
+    return await services.get_task(task_id, user, db)
 
 
 @app.delete('/api/tasks/{task_id}', status_code=204)
 async def delete_task(
     task_id: int,
-    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    await _services.delete_task(task_id, user, db)
+    await services.delete_task(task_id, user, db)
     return {'message', 'Successfully Deleted'}
 
 
 @app.put('/api/tasks/{task_id}', status_code=200)
 async def update_task(
     task_id: int,
-    task: _schemas.TaskCreate,
-    user: _schemas.User = _fastapi.Depends(_services.get_current_user),
-    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    task: schemas.TaskCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    await _services.update_task(task_id, task, user, db)
+    await services.update_task(task_id, task, user, db)
     return {'message', 'Successfully Updated'}
 
 
