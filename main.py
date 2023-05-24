@@ -5,6 +5,8 @@ import sqlalchemy.orm as _orm
 import schemas
 import services
 
+model.Base.metadata.create_all(bind=engine)
+
 app = fastapi.FastAPI()
 
 app.route('/')

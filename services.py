@@ -26,11 +26,11 @@ def get_db():
 
 
 async def get_user_by_email(email: str, db: _orm.Session):
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(models.Users).filter(models.Users.email == email).first()
 
 
 async def create_user(user: schemas.UserCreate, db: _orm.Session):
-    user_obj = models.User(email=user.email, hashed_password=_hash.bcrypt.hash(user.hashed_password))
+    user_obj = models.Users(email=user.email, hashed_password=_hash.bcrypt.hash(user.hashed_password))
     db.add(user_obj)
     db.commit()
     db.refresh(user_obj)
@@ -49,7 +49,7 @@ async def authenticate_user(email: str, password: str, db: _orm.Session):
     return user
 
 
-async def create_token(user: models.User):
+async def create_token(user: models.Users):
     user_obj = schemas.User.from_orm(user)
 
     token = jwt.encode(user_obj.dict(), JWT_SECRET)
@@ -60,7 +60,7 @@ async def create_token(user: models.User):
 async def get_current_user(db: _orm.Session = fastapi.Depends(get_db), token: str = fastapi.Depends(oauth2schema)):
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
-        user = db.query(models.User).get(payload['id'])
+        user = db.query(models.Users).get(payload['id'])
     except:
         raise fastapi.HTTPException(status_code=401, detail='Invalid email or Password')
 
@@ -68,7 +68,7 @@ async def get_current_user(db: _orm.Session = fastapi.Depends(get_db), token: st
 
 
 async def create_task(user: schemas.User, db: _orm.Session, task: schemas.TaskCreate):
-    task = models.Task(**task.dict(), owner_id=user.id)
+    task = models.Tasks(**task.dict(), owner_id=user.id)
     db.add(task)
     db.commit()
     db.refresh(task)
@@ -76,13 +76,13 @@ async def create_task(user: schemas.User, db: _orm.Session, task: schemas.TaskCr
 
 
 async def get_tasks(user: schemas.User, db: _orm.Session):
-    tasks = db.query(models.Task).filter_by(owner_id=user.id)
+    tasks = db.query(models.Tasks).filter_by(owner_id=user.id)
 
     return list(map(schemas.Task.from_orm, tasks))
 
 
 async def _task_selector(task_id: int, user: schemas.User, db: _orm.Session):
-    task = db.query(models.Task).filter_by(owner_id=user.id).filter(models.Task.id == task_id).first()
+    task = db.query(models.Tasks).filter_by(owner_id=user.id).filter(models.Tasks.id == task_id).first()
 
     if task is None:
         raise fastapi.HTTPException(status_code=404, detail='Task does not exist')
