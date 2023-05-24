@@ -75,8 +75,7 @@ async def delete_task(
     user: schemas.User = fastapi.Depends(services.get_current_user),
     db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    await services.delete_task(task_id, user, db)
-    return {'message', 'Successfully Deleted'}
+    return await services.delete_task(task_id, user, db)
 
 
 @app.put('/api/tasks/{task_id}', status_code=200)
@@ -86,5 +85,14 @@ async def update_task(
     user: schemas.User = fastapi.Depends(services.get_current_user),
     db: _orm.Session = fastapi.Depends(services.get_db),
 ):
-    await services.update_task(task_id, task, user, db)
-    return {'message', 'Successfully Updated'}
+    return await services.update_task(task_id, task, user, db)
+
+
+@app.put('/api/users/{user_id}', status_code=200)
+async def update_password(
+    user_id: int,
+    changepassword: schemas.ChangePassword,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: _orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.update_password(user_id, changepassword, user, db)

@@ -113,3 +113,23 @@ async def update_task(task_id: int, task: schemas.TaskCreate, user: schemas.User
     db.refresh(task_db)
 
     return schemas.Task.from_orm(task_db)
+
+
+async def update_password(user_id: int, changepassword: schemas.ChangePassword, user: schemas.User, db: _orm.Session):
+    db_user = await get_user_by_email(user.email, db)
+
+    if not db_user.verify_password(changepassword.password):
+        raise fastapi.HTTPException(status_code=401, detail='Invalid password')
+
+    if changepassword.new_password != changepassword.confirm_password:
+        raise fastapi.HTTPException(status_code=401, detail='The passwords are not the same')
+
+    hashed_password = _hash.bcrypt.hash(changepassword.new_password)
+
+    user_db = db.query(models.Users).filter_by(id=user_id).first()
+    user_db.hashed_password = hashed_password
+
+    db.commit()
+    db.refresh(user_db)
+
+    return schemas.User.from_orm(user_db)

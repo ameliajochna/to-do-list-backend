@@ -36,3 +36,10 @@ class Task(_TaskBase):
 
     class Config:
         orm_mode = True
+
+
+class ChangePassword(_UserBase):
+    email: str
+    password: str
+    new_password: str
+    confirm_password: str
