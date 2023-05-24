@@ -2,10 +2,12 @@ import fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
 
+import database
+import models
 import schemas
 import services
 
-model.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=database.engine)
 
 app = fastapi.FastAPI()
 
@@ -86,8 +88,3 @@ async def update_task(
 ):
     await services.update_task(task_id, task, user, db)
     return {'message', 'Successfully Updated'}
-
-
-@app.get('/api')
-async def root():
-    return {'message': 'Awesome Leads Manager'}
