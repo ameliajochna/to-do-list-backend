@@ -33,7 +33,7 @@ async def generate_token(
     user = await services.authenticate_user(form_data.username, form_data.password, db)
 
     if not user:
-        raise fastapi.HTTPException(status_code=401, detail='Invalid credentials')
+        raise fastapi.HTTPException(status_code=401, detail='Invalid email or password. Please try entering it again.')
 
     return await services.create_token(user)
 
