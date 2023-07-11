@@ -1,11 +1,19 @@
-import sqlalchemy as _sql
-import sqlalchemy.ext.declarative as _declarative
-import sqlalchemy.orm as _orm
+import sqlalchemy 
+import sqlalchemy.ext.declarative 
+import sqlalchemy.orm
+import os
 
-DATABASE_URL = 'postgresql://localhost:5432/ameliajochna'
+user = os.environ["GCP_DB_USER"]
+password = os.environ["GCP_DB_PASSWORD"]
+host = os.environ["GCP_DB_HOST"]
+port = os.environ["GCP_DB_PORT"]
+name = os.environ["GCP_DB_NAME"]
 
-engine = _sql.create_engine(DATABASE_URL)
 
-SessionLocal = _orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
+DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{name}"
 
-Base = _declarative.declarative_base()
+engine = sqlalchemy.create_engine(DATABASE_URL)
+
+SessionLocal = sqlalchemy.orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = sqlalchemy.ext.declarative.declarative_base()

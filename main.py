@@ -1,6 +1,8 @@
 import fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
+from fastapi.middleware.cors import CORSMiddleware
+
 
 import database
 import models
@@ -10,6 +12,14 @@ import services
 models.Base.metadata.create_all(bind=database.engine)
 
 app = fastapi.FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow requests from any source
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 
 app.route('/')
 
